@@ -7,44 +7,36 @@
 
 <Header />
 <div class="main">
-    <div class="subs">
-        <div style="height: 10px;"></div>
         {#each subs as sub (sub.id)}
-            <div class="sub">
-                <div class="note">
-                    <p>{sub.id}</p>
+            <a href={`/${sub.id}`} class="link">
+                <div class="sub">
+                    <div class="note">
+                        <p>{sub.id}</p>
+                    </div>
+                    <div class="sub-content">
+                        <p class="title">{sub.title}</p>
+                        <p class="content">{sub.body}</p>
+                    </div>
                 </div>
-                <div class="sub-content">
-                    <p class="title">{sub.title}</p>
-                    <p class="content">{sub.body}</p>
-                </div>
-            </div>
+            </a>
         {/each}
-        <div style="height: 10px;"></div>
-    </div>
 </div>
 
 <style>
     .main {
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
+        margin: 1em;
     }
-    .subs {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-top: 2em;
-
-        max-width: 95%;
-        border: 3px solid #000;
-        border-radius: 25px;
+    .link {
+        text-decoration: none;
+        color: black;
     }
     .note {
         background: red;
-        width: 50px;
+        min-width: 50px;
+        max-width: 50px;
         height: 50px;
         border-radius: 50%;
         font-size: 1.2em;
@@ -65,6 +57,9 @@
         width: 97%;
         border: 3px solid #000;
         border-radius: 15px;
+    }
+    .sub:hover {
+        background: rgb(237, 237, 237);
     }
     .title {
         font-size: 1.5em;

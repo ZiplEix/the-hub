@@ -5,7 +5,7 @@
 <div class="main">
     <div class="right">
         <div class="logo">
-            <h1>THE HUB</h1>
+            <a href="/"><h1>THE HUB</h1></a>
         </div>
     </div>
     <div class="left">
