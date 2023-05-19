@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "275766655217",
+    "project_id": "the-hub-d8ea7",
+    "storage_bucket": "the-hub-d8ea7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275766655217:android:44eddfb471d142312d9150",
+        "android_client_info": {
+          "package_name": "com.example.the_hub_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "275766655217-u8djicd19gtdse0q1b3udlr2hqrg3cki.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGwFKD5IcJrTi6OVcnsr5DU6PWhASsRtI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "275766655217-u8djicd19gtdse0q1b3udlr2hqrg3cki.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "275766655217-1ui0tcose4o2evefeokug6i8soadjdf7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.theHubFlutter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
