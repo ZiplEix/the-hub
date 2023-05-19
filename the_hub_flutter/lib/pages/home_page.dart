@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:the_hub_flutter/pages/add_post_page.dart';
 import 'package:the_hub_flutter/pages/profile_page.dart';
 import 'package:the_hub_flutter/utils/format_date.dart';
 import 'package:the_hub_flutter/widgets/home/drawer/drawer_widget.dart';
-import 'package:the_hub_flutter/widgets/home/message_input_widget.dart';
 import 'package:the_hub_flutter/widgets/home/posts/post_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,31 +17,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final currentUser = FirebaseAuth.instance.currentUser;
 
-  final TextEditingController postController = TextEditingController();
-
   void signOut() {
     FirebaseAuth.instance.signOut();
-  }
-
-  void postPost() async {
-    if (postController.text.isNotEmpty) {
-      final userData = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(currentUser!.uid)
-          .get();
-      FirebaseFirestore.instance.collection("posts").add({
-        "owner": currentUser!.uid,
-        "ownerUsername": userData["username"],
-        "message": postController.text,
-        'timeStamp': Timestamp.now(),
-        "likes": [],
-        "commentNb": 0,
-      });
-    }
-
-    setState(() {
-      postController.clear();
-    });
   }
 
   void goToProfilPage() {
@@ -107,30 +84,19 @@ class _HomePageState extends State<HomePage> {
                       .snapshots(),
                 ),
               ),
-
-              // post message
-              Padding(
-                padding: const EdgeInsets.only(bottom: 25.0, top: 25),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: MessageInput(
-                        controller: postController,
-                        hintText: "Write your throught",
-                      ),
-                    ),
-
-                    // post button
-                    IconButton(
-                      onPressed: postPost,
-                      icon: const Icon(Icons.arrow_circle_up),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddPostPage()),
+          );
+        },
+        backgroundColor: Colors.grey[900],
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
