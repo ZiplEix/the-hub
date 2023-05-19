@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
 
               // post message
               Padding(
-                padding: const EdgeInsets.only(bottom: 25.0),
+                padding: const EdgeInsets.only(bottom: 25.0, top: 25),
                 child: Row(
                   children: [
                     Expanded(
