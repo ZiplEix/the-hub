@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:the_hub_flutter/models/posts.dart';
 import 'package:the_hub_flutter/pages/add_post_page.dart';
 import 'package:the_hub_flutter/pages/profile_page.dart';
-import 'package:the_hub_flutter/utils/format_date.dart';
 import 'package:the_hub_flutter/widgets/home/drawer/drawer_widget.dart';
 import 'package:the_hub_flutter/widgets/home/posts/post_widget.dart';
 
@@ -55,20 +55,14 @@ class _HomePageState extends State<HomePage> {
                       return ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         itemBuilder: (context, index) {
-                          final post = snapshot.data!.docs[index];
-                          return PostWidget(
-                            message: post["message"],
-                            userName: post["ownerUsername"],
-                            postId: post.id,
-                            likes: List<String>.from(post["likes"]),
-                            time: formatDate(post["timeStamp"]),
-                            commentNb: post["commentNb"],
-                          );
+                          final Posts post =
+                              Posts.fromSnapshot(snapshot.data!.docs[index]);
+                          return PostWidget(post: post);
                         },
                       );
                     } else if (snapshot.hasError) {
                       return Center(
-                        child: Text("Error: ${snapshot.error}"),
+                        child: SelectableText("Error: ${snapshot.error}"),
                       );
                     }
                     return const Center(
@@ -81,6 +75,7 @@ class _HomePageState extends State<HomePage> {
                         "timeStamp",
                         descending: true,
                       )
+                      .where("isAComment", isEqualTo: false)
                       .snapshots(),
                 ),
               ),

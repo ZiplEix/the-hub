@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:the_hub_flutter/services/auth_services.dart';
+import 'package:the_hub_flutter/widgets/auth_widgets/auth_submit_button.dart';
 import 'package:the_hub_flutter/widgets/auth_widgets/auth_text_field.dart';
-
-import '../widgets/auth_widgets/auth_submit_button.dart';
+import 'package:the_hub_flutter/widgets/auth_widgets/auth_with_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -37,15 +37,21 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-      if (context.mounted) Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       Navigator.pop(context);
-      displayMessage(e.message!);
+      displayMessage("Please fill all the fields");
+      return;
+    }
+
+    try {
+      await AuthService().noServices.logInUser(
+            _emailController.text,
+            _passwordController.text,
+          );
+      if (context.mounted) Navigator.pop(context);
+    } on AuthException catch (e) {
+      Navigator.pop(context);
+      displayMessage(e.toString());
     }
   }
 
@@ -112,32 +118,50 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50),
 
                 // continue with
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: Divider(
-                //         thickness: 0.5,
-                //         color: Colors.grey[400],
-                //       ),
-                //     ),
-                //     Padding(
-                //       padding: const EdgeInsets.symmetric(horizontal: 10),
-                //       child: Text(
-                //         "Or continue with",
-                //         style: TextStyle(
-                //           color: Colors.grey[700],
-                //         ),
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: Divider(
-                //         thickness: 0.5,
-                //         color: Colors.grey[400],
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 50),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey[500],
+                        indent: 25,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Or continue with",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey[500],
+                        endIndent: 25,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+
+                // tier services auth
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    AuthWithWidget(
+                      onTap: () {},
+                      imagePath: "assets/apple.png",
+                    ),
+                    AuthWithWidget(
+                      onTap: () => AuthService().google.signInWithGoogle(),
+                      imagePath: "assets/google.png",
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
 
                 // not members
                 Row(

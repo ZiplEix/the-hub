@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:the_hub_flutter/models/posts.dart';
+import 'package:uuid/uuid.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({super.key});
@@ -14,30 +16,38 @@ class _AddPostPageState extends State<AddPostPage> {
 
   final TextEditingController postController = TextEditingController();
 
-  void postPost() async {
-    if (postController.text.isNotEmpty && postController.text.length < 512) {
-      final userData = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(currentUser!.uid)
-          .get();
-      FirebaseFirestore.instance.collection("posts").add({
-        "owner": currentUser!.uid,
-        "ownerUsername": userData["username"],
-        "message": postController.text,
-        'timeStamp': Timestamp.now(),
-        "likes": [],
-        "commentNb": 0,
-      });
-    }
-    if (postController.text.length >= 512) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Your post is too long",
-            textAlign: TextAlign.center,
-          ),
+  void showAlert(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Your post is empty",
+          textAlign: TextAlign.center,
         ),
-      );
+      ),
+    );
+  }
+
+  void postPost() async {
+    final userData = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUser!.uid)
+        .get();
+    Posts post = Posts(
+      commentFrom: "",
+      commentNb: 0,
+      isAComment: false,
+      likes: [],
+      message: postController.text,
+      owner: currentUser!.uid,
+      ownerUsername: userData["username"],
+      timeStamp: Timestamp.now(),
+      postId: const Uuid().v4(),
+    );
+
+    try {
+      post.addPost();
+    } on PostsError catch (e) {
+      showAlert(e.message);
       return;
     }
 

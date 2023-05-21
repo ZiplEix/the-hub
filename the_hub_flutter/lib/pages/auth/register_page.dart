@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:the_hub_flutter/services/auth_services.dart';
 import 'package:the_hub_flutter/widgets/auth_widgets/auth_submit_button.dart';
 import 'package:the_hub_flutter/widgets/auth_widgets/auth_text_field.dart';
+import 'package:the_hub_flutter/widgets/auth_widgets/auth_with_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({
@@ -40,37 +40,21 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
 
-    if (passwordController.text != confirmPasswordController.text) {
-      Navigator.pop(context);
-      displayMessage("Password don't match");
-      return;
-    }
-    if (usernameController.text.isEmpty) {
-      Navigator.pop(context);
-      displayMessage("Username field can't be empty");
-      return;
-    }
-
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc(userCredential.user!.uid)
-          .set({
-        "email": userCredential.user!.email!,
-        "username": usernameController.text,
-        "bio": "",
-      });
+      await AuthService().noServices.registerUser(
+            emailController.text,
+            passwordController.text,
+            confirmPasswordController.text,
+            usernameController.text,
+          );
 
       if (context.mounted) Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
+    } on AuthException catch (e) {
       Navigator.pop(context);
-      displayMessage(e.message!);
+      displayMessage(e.toString());
+    } catch (e) {
+      Navigator.pop(context);
+      displayMessage(e.toString());
     }
   }
 
@@ -87,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Logo
                 const Icon(
                   Icons.lock,
-                  size: 100,
+                  size: 60,
                 ),
                 const SizedBox(height: 50),
 
@@ -136,50 +120,49 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 50),
 
                 // continue with
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: Divider(
-                //         thickness: 0.5,
-                //         color: Colors.grey[400],
-                //       ),
-                //     ),
-                //     Padding(
-                //       padding: const EdgeInsets.symmetric(horizontal: 10),
-                //       child: Text(
-                //         "Or continue with",
-                //         style: TextStyle(
-                //           color: Colors.grey[700],
-                //         ),
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: Divider(
-                //         thickness: 0.5,
-                //         color: Colors.grey[400],
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 50),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Or continue with",
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
 
                 // google and apple
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     AuthAuthWith(
-                //       onTap: () {},
-                //       imagePath: "assets/apple.png",
-                //     ),
-                //     // SizedBox(width: 100),
-                //     AuthAuthWith(
-                //       onTap: () =>
-                //           AuthService().google.signInWithGoogle(context),
-                //       imagePath: "assets/google.png",
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    AuthWithWidget(
+                      onTap: () {},
+                      imagePath: "assets/apple.png",
+                    ),
+                    // SizedBox(width: 100),
+                    AuthWithWidget(
+                      onTap: () => AuthService().google.signInWithGoogle(),
+                      imagePath: "assets/google.png",
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
 
                 // not members
                 Row(
