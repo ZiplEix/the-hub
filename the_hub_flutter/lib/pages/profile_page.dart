@@ -170,6 +170,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 onglet == 1
                     ? MyCommentsWidget(currentUser: currentUser)
                     : Container(),
+                onglet == 2
+                    ? MyLikesWidget(currentUser: currentUser)
+                    : Container(),
 
                 const SizedBox(height: 25),
               ],
@@ -184,6 +187,54 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         },
       ),
+    );
+  }
+}
+
+class MyLikesWidget extends StatefulWidget {
+  const MyLikesWidget({
+    super.key,
+    required this.currentUser,
+  });
+
+  final User? currentUser;
+
+  @override
+  State<MyLikesWidget> createState() => _MyLikesWidgetState();
+}
+
+class _MyLikesWidgetState extends State<MyLikesWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final Posts post = Posts.fromSnapshot(snapshot.data!.docs[index]);
+              return PostWidget(post: post);
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: SelectableText("Error: ${snapshot.error}"),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      stream: FirebaseFirestore.instance
+          .collection("posts")
+          .orderBy(
+            "timeStamp",
+            descending: true,
+          )
+          .where("likes", arrayContains: widget.currentUser!.uid)
+          .snapshots(),
     );
   }
 }
